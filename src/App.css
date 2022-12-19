@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+#profile{
+  border-radius: 50%;
+}
+
+.bi-download{
+  background-color: white;
+  border-color: white;
+  border: 0px solid black;
+  border-radius: 5px;
+}
+
+.bi-download:hover{
+  background-color: rgb(215, 220, 225);
+}
+
+.signInButton{
+  border-radius: 20px !important;
+  padding: 10px !important;
+  font-size: 20px !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
