@@ -23,14 +23,6 @@ function App() {
     }
     gapi.load('client:auth2', initClient);
 
-
-    // const fetchFiles = async () => {
-    //   console.log("profile : ", await profile.email);
-    //   await axios.get("http://localhost:9000/getAllFiles/" + profile?.email).then((result) => setFileNames(result.data))
-    // }
-    // initClient().then(() => {
-    //   fetchFiles();
-    // })
   }, []);
 
 
