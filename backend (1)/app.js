@@ -11,7 +11,10 @@ app.use(cors());
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '../storage');
+        // console.log("req.params.folderName : ", req.params.folderName);
+        const path = '../storage/' + req.params.folderName;
+        fs.mkdirSync(path, { recursive: true })
+        cb(null, path);
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -23,13 +26,20 @@ let upload = multer({
 })
 
 function getDirectories(path) {
-    return fs.readdirSync(path).filter(function (file) {
-        return fs.statSync(path + '/' + file);
-    });
+    try {
+        return fs.readdirSync(path).filter(function (file) {
+            return fs.statSync(path + '/' + file);
+        });
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
+
 }
 
 
-app.post('/upload', upload.single("file"), (req, res) => {
+app.post('/upload/:folderName', upload.single("file"), (req, res) => {
+
     console.log("req.file : ", req.file)
     res.sendStatus(200).send(req.file);
 });
@@ -40,8 +50,9 @@ app.get("/download/:fileName", (req, res) => {
     res.download(file);
 });
 
-app.get("/getAllFiles", (req, res) => {
-    res.send(getDirectories("../storage"));
+app.get("/getAllFiles/:folderName", (req, res) => {
+    let folderName = req.params.folderName;
+    res.send(getDirectories("../storage/" + folderName));
 })
 
 app.listen(port, () => console.log("listening on port ", port));

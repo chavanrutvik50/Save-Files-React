@@ -23,10 +23,14 @@ function App() {
     }
     gapi.load('client:auth2', initClient);
 
-    const fetchFiles = async () => {
-      await axios.get("http://localhost:9000/getAllFiles").then((result) => setFileNames(result.data))
-    }
-    fetchFiles();
+
+    // const fetchFiles = async () => {
+    //   console.log("profile : ", await profile.email);
+    //   await axios.get("http://localhost:9000/getAllFiles/" + profile?.email).then((result) => setFileNames(result.data))
+    // }
+    // initClient().then(() => {
+    //   fetchFiles();
+    // })
   }, []);
 
 
@@ -37,8 +41,9 @@ function App() {
 
   async function handleSubmit(event) {
     event.preventDefault()
+
     if (file) {
-      const url = 'http://localhost:9000/upload';
+      const url = 'http://localhost:9000/upload/' + profile.email;
       const formData = new FormData();
       console.log('file ', file);
       console.log('fileName ', file.name);
@@ -56,6 +61,9 @@ function App() {
 
       await axios.post(url, formData, config,).then((response) => {
         console.log(response.data);
+      }).catch((err) => {
+        console.log("error : ", err);
+        setProgress();
       });
 
       await window.location.reload();
@@ -64,11 +72,12 @@ function App() {
     }
   }
 
+  const onSuccess = async (res) => {
+    await setProfile(res.profileObj)
+    console.log('success:', await res);
+    console.log("profile : ", res.profileObj.email);
+    axios.get("http://localhost:9000/getAllFiles/" + res.profileObj?.email).then((result) => setFileNames(result.data))
 
-
-  const onSuccess = (res) => {
-    setProfile(res.profileObj)
-    console.log('success:', res);
   };
   const onFailure = (err) => {
     console.log('failed:', err);
@@ -91,15 +100,15 @@ function App() {
             <br></br>
             <div className='ps-3 pe-3'>
               <form onSubmit={handleSubmit} className="mb-3">
-                <div class="input-group mb-3">
+                <div className="input-group mb-3">
                   <input type="file" className="form-control mr-sm-2" id="getFile" onChange={handleChange} />
-                  <div class="input-group-append">
+                  <div className="input-group-append">
                     <button type="submit" className='input-group-text'>Upload</button>
                   </div>
                 </div>
               </form>
-              {progress ? (<div class="progress">
-                <div class="progress-bar-striped bg-info w-75" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"></div>
+              {progress ? (<div className="progress">
+                <div className="progress-bar-striped bg-info w-75" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"></div>
               </div>
               )
                 : ("")
